@@ -196,10 +196,19 @@ with st.sidebar:
     # Text informatiu per a l'usuari
     st.markdown("<br><p style='font-style: italic; color: white;'>Selecciona una foto d'un plat o menú per rebre consells nutricionals personalitzats.</p>", unsafe_allow_html=True)
 
-# 3. CAPÇALERA
-st.title("🥗 Assistent de Menús Saludables")
-st.write("Digitalitza la teva alimentació amb Intel·ligència Artificial.")
-st.write("---")
+# ==================================================
+# PAS 5: CAPÇALERA PRINCIPAL AMB ANIMACIONS
+# ==================================================
+# Títol principal amb les icones que es mouen (definides al principi amb CSS)
+st.markdown("""
+    <h1 style='color: white; text-align: center;'>
+        <span class='title-icon-left'>🥑</span> 
+        Assistent de Menús Saludables 
+        <span class='title-icon-right'>🥗</span>
+    </h1>
+    """, unsafe_allow_html=True)
+st.markdown("<h5 style='color: white; text-align: center; font-weight: bold;'>DIGITALITZA LA TEVA ALIMENTACIÓ AMB IA</h5>", unsafe_allow_html=True)
+st.divider()
 
 # 4. COS DE L'APLICACIÓ
 col1, col2 = st.columns([1, 1], gap="large")
