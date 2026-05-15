@@ -210,56 +210,86 @@ st.markdown("""
 st.markdown("<h5 style='color: white; text-align: center; font-weight: bold;'>DIGITALITZA LA TEVA ALIMENTACIÓ AMB IA</h5>", unsafe_allow_html=True)
 st.divider()
 
-# 4. COS DE L'APLICACIÓ
-col1, col2 = st.columns([1, 1], gap="large")
+# ==================================================
+# PAS 6: COS DE L'APLICACIÓ - DUES COLUMNES
+# ==================================================
+# Dividim la pantalla en dues parts: una per pujar foto, una altra per veure resultats
+col1, col2 = st.columns([1, 1.2], gap="large")
 
+# ---------- COLUMNA 1: PUJAR IMATGE---------
 with col1:
-    st.markdown("<div class='info-header'>📸 Puja la teva imatge</div>", unsafe_allow_html=True)
+    st.markdown("""
+        <div>
+            <span class='big-icon'>📸</span>
+            <div class='info-header'>Puja la imatge</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    # Eina de Streamlit: botó per seleccionar fotos de l'ordinador
     uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
     
+    # Si l'usuari ha pujat una foto...
     if uploaded_file:
-        image = Image.open(uploaded_file)
-        st.image(image, use_container_width=True)
-        analitzar = st.button("🔍 ANALITZAR AMB IA")
+        image = Image.open(uploaded_file) # Obrim la imatge
+        st.image(image, use_container_width=True, caption="Imatge preparada") # La mostrem
+        analitzar = st.button("🔍 ANALITZAR ARA") # Botó per començar
+    else:
+        # Missatge per defecte si encara no s'ha pujat res
+        st.markdown("<p style='text-align: center;'>☝️ Tria una foto per començar</p>", unsafe_allow_html=True)
+
+# ---------- COLUMNA 2: RESULTATS DE L'ANÀLISI ----------
 with col2:
-    st.markdown("<div class='info-header'>📊 Resultat de l'Anàlisi</div>", unsafe_allow_html=True)
-    if uploaded_file and analitzar:
-        with st.spinner('Processant...'):
-            time.sleep(2)
+    st.markdown("""
+        <div>
+            <span class='big-icon'>📊</span>
+            <div class='info-header'>Resultat anàlisi</div>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # Només treballem si hi ha foto i s'ha premut el botó
+    if uploaded_file and 'analitzar' in locals() and analitzar:
+        with st.spinner('🌟 Estem analitzant les propietats nutricionals...'):
+            time.sleep(2) # Petita espera per simular procés i que es vegi l'animació
+            
             st.markdown("<div class='result-card'>", unsafe_allow_html=True)
+            
+            # 🌟 NOVETAT: DUES SUB-COLUMNES PER POSAR DADES NUMÈRIQUES 🌟
+            m1, m2 = st.columns(2)
+            
+            # --------------------------
+            # OPCIÓ 1: MODE DEMO (EXEMPLES)
+            # --------------------------
             if demo_mode:
                 if tipus_demo == "Menú Complet":
-                    st.success("✅ Menú detectat")
-                    st.markdown("""
-                    **📋 Detall del Menú:**
-                    * **Primer plat:** Crema de carbassa o Amanida de tomàquet.
-                    * **Segon plat:** Llobarro al forn o Hamburguesa amb formatge.
-                    * **Postres:** Fruita o Iogurt natural.
-                    * **Beguda:** Aigua mineral.
+                    # 🔢 NOVETAT: Utilitzem 'metric' per mostrar dades com si fossin indicadors professionals
+                    m1.metric("Qualitat Nutricional", "A", "Molt alta")
+                    m2.metric("Tipus de Menú", "Equilibrat")
+                    st.success("✅ Menú analitzat amb èxit") # Missatge de correcte
                     
-                    **🥗 Recomanació:**
-                    Tria la **Crema + Llobarro** per un dinar equilibrat.
-                    """)
-                else:
-                    st.success("✅ Plat detectat")
+                    # Text explicatiu del menú
                     st.markdown("""
-                    **🥗 Plat:** Amanida Cobb.
-                    * **Ingredients:** Pollastre, ou, alvocat, formatge.
-                    * **Al·lèrgens:** Ous i Lactosa.
-                    * **Consell:** Molta proteïna, però vigila amb les salses!
+                    ### 📋 Detall del Menú:
+                    *   **Primer plat:** Crema de carbassa 🎃 o Amanida de tomàquet 🍅.
+                    *   **Segon plat:** Llobarro al forn 🐟 o Hamburguesa vegetal 🌿.
+                    *   **Postres:** Fruita de temporada 🍎 o Iogurt natural 🥛.
+                    
+                    ---
+                    ### 🥗 El nostre consell:
+                    La combinació de **Crema + Llobarro** és excel·lent. Proporciona fibra, proteïna de gran qualitat i greixos saludables.
+                    """)
+                
+                else: # Si hem triat "Plat Únic"
+                    m1.metric("Nivell Saludable", "85%", "Excel·lent")
+                    m2.metric("Proteïna", "24g", "Ideal")
+                    st.success("✅ Plat detectat: **Amanida Cobb Saludable**")
+                    
+                    st.markdown("""
+                    ### 🥗 Anàlisi detallada:
+                    *   **Base:** Pollastre a la planxa, ou dur i alvocat.
+                    *   **Al·lèrgens:** Ous 🥚 i Lactosa 🥛.
+                    *   **Consell:** Afegeix llavors de chía per a un extra de minerals. Evita les salses processades.
                     """)
             else:
-                try:
-                    genai.configure(api_key=api_key)
-                    model = genai.GenerativeModel('gemini-1.5-flash')
-                    prompt = "Analitza aquesta imatge. Si és menú, transcriu-lo. Si és plat, dona consells nutricionals. Respon en català."
-                    response = model.generate_content([prompt, image])
-                    st.write(response.text)
-                except Exception as e:
-                    st.error(f"Error: {e}")
-            st.markdown("</div>", unsafe_allow_html=True)
-    else:
-        st.info("Surtirà aquí un cop pugis la foto.")
-
-st.write("---")
-st.caption("Projecte Digitalització 2026")
+                st.info("Penja una imatge o activa el mode demo per veure l'anàlisi.")
+    
+    st.markdown("</div>", unsafe_allow_html=True)
