@@ -95,7 +95,7 @@ st.markdown("""
         margin-top: 20px;
     }
 
-    /* BLOQUES DE ANÁLISIS MEJORADOS CON HOVER */
+    /* BLOQUES DE ANÁLISIS CON HOVER */
     .analysis-section {
         background: rgba(255, 255, 255, 0.08);
         border-radius: 15px;
@@ -124,28 +124,12 @@ st.markdown("""
         margin-bottom: 10px;
     }
 
-    .section-content {
-        line-height: 1.6;
-        font-size: 1.05em;
-    }
+    .section-content { line-height: 1.6; font-size: 1.05em; }
 
-    /* Estilos para listas dentro de secciones */
-    .section-content ul {
-        list-style-type: none;
-        padding-left: 0;
-    }
-    .section-content li {
-        margin-bottom: 8px;
-        padding-left: 25px;
-        position: relative;
-    }
-    .section-content li::before {
-        content: "✨";
-        position: absolute;
-        left: 0;
-        color: #FFD600;
-    }
-
+    /* Estilos para listas personalizadas */
+    .section-content ul { list-style-type: none; padding-left: 0; margin: 10px 0; }
+    .section-content li { margin-bottom: 8px; padding-left: 35px; position: relative; }
+    
     /* Nutri-Score Pill */
     .nutri-score-inline {
         display: inline-block;
@@ -175,6 +159,51 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# FUNCIONES DE UTILIDAD PARA ICONOS DINÁMICOS
+def get_dynamic_icon(content, default_icon):
+    content = content.lower()
+    # Mapeo de palabras clave a iconos
+    mapping = {
+        "proteína": "💪", "pollo": "🍗", "carne": "🥩", "pescado": "🐟", "huevo": "🥚",
+        "grasa": "🥑", "aceite": "🫒", "bacon": "🥓", "queso": "🧀", "mantequilla": "🧈",
+        "azúcar": "🍭", "dulce": "🍩", "postre": "🍰", "helado": "🍦", "fruta": "🍎",
+        "bebida": "🥤", "agua": "💧", "café": "☕", "té": "🍵", "limonada": "🍋",
+        "verdura": "🥦", "ensalada": "🥗", "fibra": "🌾", "pan": "🍞", "pasta": "🍝",
+        "calorías": "🔥", "energía": "⚡", "sodio": "🧂", "sal": "🧂",
+        "alérgeno": "⚠️", "gluten": "🌾", "lácteo": "🥛", "frutos secos": "🥜"
+    }
+    for key, icon in mapping.items():
+        if key in content:
+            return icon
+    return default_icon
+
+def parse_markdown_to_html(text, default_bullet="✨"):
+    # Convertir negritas
+    text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+    # Convertir listas
+    lines = text.split('\n')
+    html_lines = []
+    in_list = False
+    for line in lines:
+        line = line.strip()
+        if line.startswith('*') or line.startswith('-'):
+            if not in_list:
+                html_lines.append('<ul>')
+                in_list = True
+            content = line[1:].strip()
+            # Obtener icono dinámico basado en el contenido de la línea
+            icon = get_dynamic_icon(content, default_bullet)
+            html_lines.append(f'<li style="position: relative; padding-left: 35px;"><span style="position: absolute; left: 0;">{icon}</span>{content}</li>')
+        else:
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
+            if line:
+                html_lines.append(f'{line}<br>')
+    if in_list:
+        html_lines.append('</ul>')
+    return "".join(html_lines)
+
 # 3. BARRA LATERAL
 with st.sidebar:
     st.image("https://cdn-icons-png.flaticon.com/512/2424/2424569.png", width=80)
@@ -182,7 +211,7 @@ with st.sidebar:
     st.divider()
     demo_mode = st.toggle("🚀 Activar Modo Demo", value=False)
     if demo_mode:
-        tipus_demo = st.selectbox("Simulación:", ["Menú Completo", "Plato Único (Receta)"])
+        tipus_demo = st.selectbox("Simulación:", ["Menú Complet", "Plat Únic (Recepta)"])
     else:
         api_key = st.text_input("Gemini API Key:", type="password")
     
@@ -202,8 +231,7 @@ st.markdown("""
 st.markdown("<h5 style='color: white; text-align: center; font-weight: bold;'>DIGITALITZA TU ALIMENTACIÓN CON IA</h5>", unsafe_allow_html=True)
 st.divider()
 
-# 5. CUERPO DE LA APLICACIÓN - LAYOUT MEJORADO
-# 5.1 Encabezado Centrado
+# 5. CUERPO DE LA APLICACIÓN
 _, col_header, _ = st.columns([1, 2, 1])
 with col_header:
     st.markdown("""
@@ -215,9 +243,7 @@ with col_header:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# 5.2 Zona de Carga y Previsualización lado a lado
 col_left, col_right = st.columns(2, gap="medium")
-
 with col_left:
     uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
     if not uploaded_file:
@@ -234,7 +260,6 @@ with col_right:
             </div>
         """, unsafe_allow_html=True)
 
-# 5.3 Botón ANALIZAR debajo
 st.markdown("<br>", unsafe_allow_html=True)
 _, col_btn, _ = st.columns([1, 1.2, 1])
 with col_btn:
@@ -248,22 +273,28 @@ if uploaded_file and analitzar:
     with st.spinner('🌟 Analizando nutrición...'):
         time.sleep(1.5) 
         
-        st.markdown("<div class='result-card'>", unsafe_allow_html=True)
+        html_output = "<div class='result-card'>"
         
         if demo_mode:
-            st.markdown("<div class='nutri-score-inline score-A'>Calidad Nutricional: A - Excelente</div>", unsafe_allow_html=True)
-            demo_sections = [
-                ("1. Identificación", "<ul><li>🥗 Ensalada Saludable</li><li>🥑 Aguacate fresco</li><li>🍗 Pechuga de pollo</li></ul>"),
-                ("2. Análisis Nutricional", "<ul><li>🔥 Calorías: 450 kcal</li><li>💪 Proteínas: 35g</li><li>🥑 Grasas saludables: 22g</li></ul>"),
-                ("3. Recomendación", "<ul><li>🌿 Añade semillas para más fibra</li><li>💧 Bebe agua para acompañar</li></ul>"),
-                ("4. Alérgenos", "<ul><li>🚫 Ninguno detectado</li><li>🌾 Libre de gluten</li></ul>")
+            html_output += "<div class='nutri-score-inline score-A'>Calidad Nutricional: A - Excelente</div>"
+            demo_data = [
+                ("Identificación", "🍽️", "😋", "* Ensalada Saludable\n* Agua mineral\n* Pechuga de pollo"),
+                ("Análisis Nutricional", "📈", "🧪", "* Calorías: 450 kcal\n* Proteínas: 35g\n* Grasas saludables: 22g"),
+                ("Recomendaciones", "💡", "🌟", "* Añade aceite de oliva\n* Evita el azúcar refinado"),
+                ("Alérgenos", "⚠️", "🛑", "* Ninguno detectado\n* Libre de gluten")
             ]
-            for title, content in demo_sections:
-                st.markdown(f"<div class='analysis-section'><span class='section-num'>{title}</span><br><div class='section-content'>{content}</div></div>", unsafe_allow_html=True)
+            for i, (title, icon, bullet, content) in enumerate(demo_data):
+                html_content = parse_markdown_to_html(content, default_bullet=bullet)
+                html_output += f"""
+                <div class='analysis-section'>
+                    <span class='section-num'>{icon} {i+1}. {title}</span><br>
+                    <div class='section-content'>{html_content}</div>
+                </div>"""
         else:
             try:
                 if not api_key:
                     st.warning("⚠️ Introduce tu API Key en la barra lateral.")
+                    html_output = ""
                 else:
                     genai.configure(api_key=api_key)
                     model = genai.GenerativeModel('gemini-3-flash-preview')
@@ -271,47 +302,61 @@ if uploaded_file and analitzar:
                     prompt = f"""
                     Analiza esta imagen nutricionalmente. Responde en el idioma: {idioma_analisis}.
                     
-                    ESTRUCTURA OBLIGATORIA (Usa Markdown y Emojis):
+                    ESTRUCTURA OBLIGATORIA:
                     - Primera línea: [SCORE:A] o [SCORE:B], [SCORE:C], [SCORE:D], [SCORE:E] según la calidad.
-                    - Luego, 4 secciones numeradas así:
-                    PARTE 1: Identificación. (Usa una lista con viñetas y emojis de comida para los ingredientes).
-                    PARTE 2: Análisis nutricional. (Usa viñetas para calorías, proteínas, grasas, etc.).
-                    PARTE 3: Recomendaciones. (Usa viñetas con consejos de salud específicos).
-                    PARTE 4: Alérgenos. (Lista clara con símbolos de advertencia ⚠️).
+                    - Luego, 4 secciones numeradas (PARTE 1 a 4).
                     
-                    IMPORTANTE: No escribas párrafos largos. Usa listas (puntos) para que sea muy visual.
+                    CONTENIDO:
+                    1. Identifica platos y bebidas (especifica si es agua, café, limonada, etc.).
+                    2. Detalla nutrientes (especifica si hay azúcares, grasas saturadas, proteínas, etc.).
+                    3. Da recomendaciones saludables.
+                    4. Indica alérgenos.
+                    
+                    ESTILO: Usa listas con asteriscos (*). Sé muy descriptivo para que pueda identificar los alimentos.
                     """
                     
                     response = model.generate_content([prompt, image])
                     raw_text = response.text
                     
-                    # Nutri-Score Pill
+                    # Extraer Nutri-Score
                     score_match = re.search(r'\[SCORE:([A-E])\]', raw_text)
                     if score_match:
                         score = score_match.group(1)
                         labels = {"A": "Excelente", "B": "Buena", "C": "Intermedia", "D": "Baja", "E": "Desfavorable"}
-                        st.markdown(f"<div class='nutri-score-inline score-{score}'>Calidad Nutricional: {score} - {labels[score]}</div>", unsafe_allow_html=True)
+                        html_output += f"<div class='nutri-score-inline score-{score}'>Calidad Nutricional: {score} - {labels[score]}</div>"
                     
-                    # Separar secciones 1, 2, 3, 4
+                    # Configuración de iconos por sección
+                    config = {
+                        1: {"title": "Identificación", "icon": "🍽️", "bullet": "🍽️"},
+                        2: {"title": "Análisis Nutricional", "icon": "📈", "bullet": "📊"},
+                        3: {"title": "Recomendaciones", "icon": "💡", "bullet": "✅"},
+                        4: {"title": "Alérgenos", "icon": "⚠️", "bullet": "🚫"}
+                    }
+                    
                     sections = re.split(r'PARTE (\d):', raw_text)
-                    section_titles = {1: "Identificación", 2: "Análisis Nutricional", 3: "Recomendaciones", 4: "Alérgenos"}
-                    
                     for i in range(1, 5):
                         idx = sections.index(str(i)) + 1 if str(i) in sections else None
                         if idx:
                             content = sections[idx].strip()
-                            # Convertir Markdown de la IA a HTML de Streamlit (st.markdown procesa markdown dentro de los divs)
-                            st.markdown(f"""
-                                <div class='analysis-section'>
-                                    <span class='section-num'>{i}. {section_titles[i]}</span><br>
-                                    <div class='section-content'>{st.markdown(content) if False else content}</div>
-                                </div>
-                            """, unsafe_allow_html=True)
+                            # Limpieza de títulos repetidos
+                            content = re.sub(r'^(Identificación|Análisis Nutricional|Recomendaciones|Alérgenos)\s*', '', content, flags=re.IGNORECASE)
+                            content = re.sub(r'^###\s+.*', '', content, flags=re.MULTILINE)
                             
+                            # RENDERIZADO DINÁMICO
+                            html_content = parse_markdown_to_html(content, default_bullet=config[i]["bullet"])
+                            
+                            html_output += f"""
+                                <div class='analysis-section'>
+                                    <span class='section-num'>{config[i]["icon"]} {i}. {config[i]["title"]}</span><br>
+                                    <div class='section-content'>{html_content}</div>
+                                </div>"""
             except Exception as e:
                 st.error(f"❌ Error: {e}")
-        
-        st.markdown("</div>", unsafe_allow_html=True)
+                html_output = ""
+
+        if html_output:
+            html_output += "</div>"
+            st.markdown(html_output, unsafe_allow_html=True)
 
 # 7. PIE DE PÁGINA
 st.divider()
