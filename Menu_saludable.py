@@ -32,7 +32,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-    # 2. BARRA LATERAL
+# 2. BARRA LATERAL
 with st.sidebar:
     st.title("⚙️ Configuració")
     demo_mode = st.toggle("🚀 Activar Mode Demo", value=True)
@@ -41,16 +41,8 @@ with st.sidebar:
     else:
         api_key = st.text_input("Gemini API Key:", type="password")
 
-    # 3. CAPÇALERA
-￼
-46
-+
+# 3. CAPÇALERA
 st.title("🥗 Assistent de Menús Saludables")
-￼
-47
-+
 st.write("Digitalitza la teva alimentació amb Intel·ligència Artificial.")
-￼
-48
-+
 st.write("---")
+
