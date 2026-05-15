@@ -13,3 +13,7 @@ Para que funciones es necesario tener instalado previamente Node.js, que aporta 
 - Streamlit: Biblioteca Python para transformar el códico en una página web moderna. Encargada de toda la interfaz visual, estilos y navegación.
 
 - Pillow: Biblioteca utilizada para el tratamiento y carga de las imágenes que sube el usuario.
+
+# Método para ejecutar la aplicación
+Primero hay que abrir Powershell, sitúa en la carpeta donde hay el archivo del proyecto y ejecuta el siguiente comando: py -m streamlit run "nombre_archivo.py"
+Si aparece el mensaje Allow execution of [py]?, se debe seleccionar la opción 1, Allow once para permitir la ejecución y continuar.
