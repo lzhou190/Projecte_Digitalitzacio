@@ -59,3 +59,40 @@ with col1:
         analitzar = st.button("🔍 ANALITZAR AMB IA")
 with col2:
     st.markdown("<div class='info-header'>📊 Resultat de l'Anàlisi</div>", unsafe_allow_html=True)
+    if uploaded_file and analitzar:
+        with st.spinner('Processant...'):
+            time.sleep(2)
+            st.markdown("<div class='result-card'>", unsafe_allow_html=True)
+            if demo_mode:
+                if tipus_demo == "Menú Complet":
+                    st.success("✅ Menú detectat")
+                    st.markdown("""
+                    **📋 Detall del Menú:**
+                    * **Primer plat:** Crema de carbassa o Amanida de tomàquet.
+                    * **Segon plat:** Llobarro al forn o Hamburguesa amb formatge.
+                    * **Postres:** Fruita o Iogurt natural.
+                    * **Beguda:** Aigua mineral.
+                    
+                    **🥗 Recomanació:**
+                    Tria la **Crema + Llobarro** per un dinar equilibrat.
+                    """)
+                else:
+                    st.success("✅ Plat detectat")
+                    st.markdown("""
+                    **🥗 Plat:** Amanida Cobb.
+                    * **Ingredients:** Pollastre, ou, alvocat, formatge.
+                    * **Al·lèrgens:** Ous i Lactosa.
+                    * **Consell:** Molta proteïna, però vigila amb les salses!
+                    """)
+            else:
+                try:
+                    genai.configure(api_key=api_key)
+                    model = genai.GenerativeModel('gemini-1.5-flash')
+                    prompt = "Analitza aquesta imatge. Si és menú, transcriu-lo. Si és plat, dona consells nutricionals. Respon en català."
+                    response = model.generate_content([prompt, image])
+                    st.write(response.text)
+                except Exception as e:
+                    st.error(f"Error: {e}")
+            st.markdown("</div>", unsafe_allow_html=True)
+    else:
+        st.info("Surtirà aquí un cop pugis la foto.")
