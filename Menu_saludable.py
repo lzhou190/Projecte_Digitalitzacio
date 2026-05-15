@@ -29,3 +29,5 @@ st.markdown("""
         border-bottom: 2px solid #e0e0e0;
         padding-bottom: 5px;
     }
+    </style>
+    """, unsafe_allow_html=True)
