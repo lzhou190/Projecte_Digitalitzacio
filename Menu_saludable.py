@@ -57,3 +57,5 @@ with col1:
         image = Image.open(uploaded_file)
         st.image(image, use_container_width=True)
         analitzar = st.button("🔍 ANALITZAR AMB IA")
+with col2:
+    st.markdown("<div class='info-header'>📊 Resultat de l'Anàlisi</div>", unsafe_allow_html=True)
