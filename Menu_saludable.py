@@ -28,7 +28,7 @@ st.markdown("""
         border: 3px solid #FF0076;
         box-shadow: 0 0 25px rgba(255, 0, 118, 0.4);
         text-align: center;
-        height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -91,17 +91,26 @@ st.markdown("""
         border-radius: 30px;
         border: 4px solid #FFD600;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-        color: #f0f0f0 !important; /* Color de letra mejorado */
+        color: #f0f0f0 !important;
         margin-top: 20px;
     }
 
-    /* BLOQUES DE ANÁLISIS (1, 2, 3, 4) */
+    /* BLOQUES DE ANÁLISIS MEJORADOS CON HOVER */
     .analysis-section {
         background: rgba(255, 255, 255, 0.08);
         border-radius: 15px;
         padding: 20px;
         margin-bottom: 15px;
         border-left: 6px solid #FF0076;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        cursor: default;
+    }
+    
+    .analysis-section:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-left-color: #FFD600;
+        transform: translateX(10px);
+        box-shadow: -5px 5px 15px rgba(255, 214, 0, 0.2);
     }
     
     .section-num {
@@ -109,11 +118,32 @@ st.markdown("""
         font-weight: 900;
         font-size: 1.2em;
         margin-right: 10px;
+        border-bottom: 2px solid rgba(255, 214, 0, 0.3);
+        padding-bottom: 5px;
+        display: inline-block;
+        margin-bottom: 10px;
     }
 
     .section-content {
         line-height: 1.6;
         font-size: 1.05em;
+    }
+
+    /* Estilos para listas dentro de secciones */
+    .section-content ul {
+        list-style-type: none;
+        padding-left: 0;
+    }
+    .section-content li {
+        margin-bottom: 8px;
+        padding-left: 25px;
+        position: relative;
+    }
+    .section-content li::before {
+        content: "✨";
+        position: absolute;
+        left: 0;
+        color: #FFD600;
     }
 
     /* Nutri-Score Pill */
@@ -157,7 +187,6 @@ with st.sidebar:
         api_key = st.text_input("Gemini API Key:", type="password")
     
     st.divider()
-    # Buscador de idioma favorito
     idioma_analisis = st.text_input("🌍 Tu lenguaje favorito:", value="Castellano", placeholder="Ej: Japonés, Italiano...")
     
     st.markdown("<br><p style='font-style: italic; color: white;'>Selecciona una foto de un plato o menú para recibir consejos nutricionales personalizados.</p>", unsafe_allow_html=True)
@@ -170,13 +199,13 @@ st.markdown("""
         <span class='title-icon-right'>🥗</span>
     </h1>
     """, unsafe_allow_html=True)
-st.markdown("<h5 style='color: white; text-align: center; font-weight: bold;'>DIGITALIZA TU ALIMENTACIÓN CON IA</h5>", unsafe_allow_html=True)
+st.markdown("<h5 style='color: white; text-align: center; font-weight: bold;'>DIGITALITZA TU ALIMENTACIÓN CON IA</h5>", unsafe_allow_html=True)
 st.divider()
 
-# 5. CUERPO DE LA APLICACIÓN
-col_icon, col_upload = st.columns([1, 2], gap="large")
-
-with col_icon:
+# 5. CUERPO DE LA APLICACIÓN - LAYOUT MEJORADO
+# 5.1 Encabezado Centrado
+_, col_header, _ = st.columns([1, 2, 1])
+with col_header:
     st.markdown("""
         <div class="info-header-container">
             <span class='big-icon'>📸</span>
@@ -184,13 +213,28 @@ with col_icon:
         </div>
     """, unsafe_allow_html=True)
 
-with col_upload:
+st.markdown("<br>", unsafe_allow_html=True)
+
+# 5.2 Zona de Carga y Previsualización lado a lado
+col_left, col_right = st.columns(2, gap="medium")
+
+with col_left:
     uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"], label_visibility="collapsed")
+    if not uploaded_file:
+        st.info("👈 Selecciona una foto desde tu dispositivo")
+
+with col_right:
     if uploaded_file:
         image = Image.open(uploaded_file)
-        st.image(image, use_container_width=True, caption="Imagen cargada")
+        st.image(image, use_container_width=True, caption="Imagen cargada correctamente")
+    else:
+        st.markdown("""
+            <div style="border: 3px dashed rgba(255,255,255,0.2); border-radius: 20px; height: 150px; display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); font-weight: bold;">
+                📷 Esperando imagen...
+            </div>
+        """, unsafe_allow_html=True)
 
-# Botón centrado
+# 5.3 Botón ANALIZAR debajo
 st.markdown("<br>", unsafe_allow_html=True)
 _, col_btn, _ = st.columns([1, 1.2, 1])
 with col_btn:
@@ -204,19 +248,18 @@ if uploaded_file and analitzar:
     with st.spinner('🌟 Analizando nutrición...'):
         time.sleep(1.5) 
         
-        # TODO DENTRO DE RESULT-CARD
         st.markdown("<div class='result-card'>", unsafe_allow_html=True)
         
         if demo_mode:
             st.markdown("<div class='nutri-score-inline score-A'>Calidad Nutricional: A - Excelente</div>", unsafe_allow_html=True)
             demo_sections = [
-                ("1. Identificación", "Ensalada Saludable con pollo y aguacate."),
-                ("2. Análisis Nutricional", "Calorías: 450 kcal. Rica en proteínas y grasas saludables."),
-                ("3. Recomendación", "Añade semillas de lino para más Omega-3."),
-                ("4. Alérgenos", "Contiene Pollo. Libre de gluten y lactosa.")
+                ("1. Identificación", "<ul><li>🥗 Ensalada Saludable</li><li>🥑 Aguacate fresco</li><li>🍗 Pechuga de pollo</li></ul>"),
+                ("2. Análisis Nutricional", "<ul><li>🔥 Calorías: 450 kcal</li><li>💪 Proteínas: 35g</li><li>🥑 Grasas saludables: 22g</li></ul>"),
+                ("3. Recomendación", "<ul><li>🌿 Añade semillas para más fibra</li><li>💧 Bebe agua para acompañar</li></ul>"),
+                ("4. Alérgenos", "<ul><li>🚫 Ninguno detectado</li><li>🌾 Libre de gluten</li></ul>")
             ]
             for title, content in demo_sections:
-                st.markdown(f"<div class='analysis-section'><span class='section-num'>{title}</span><br><span class='section-content'>{content}</span></div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='analysis-section'><span class='section-num'>{title}</span><br><div class='section-content'>{content}</div></div>", unsafe_allow_html=True)
         else:
             try:
                 if not api_key:
@@ -228,13 +271,15 @@ if uploaded_file and analitzar:
                     prompt = f"""
                     Analiza esta imagen nutricionalmente. Responde en el idioma: {idioma_analisis}.
                     
-                    ESTRUCTURA OBLIGATORIA:
+                    ESTRUCTURA OBLIGATORIA (Usa Markdown y Emojis):
                     - Primera línea: [SCORE:A] o [SCORE:B], [SCORE:C], [SCORE:D], [SCORE:E] según la calidad.
                     - Luego, 4 secciones numeradas así:
-                    PARTE 1: Identificación y transcripción.
-                    PARTE 2: Análisis nutricional (calorías, macros).
-                    PARTE 3: Consejos para mejorar el plato.
-                    PARTE 4: Alérgenos visibles o probables.
+                    PARTE 1: Identificación. (Usa una lista con viñetas y emojis de comida para los ingredientes).
+                    PARTE 2: Análisis nutricional. (Usa viñetas para calorías, proteínas, grasas, etc.).
+                    PARTE 3: Recomendaciones. (Usa viñetas con consejos de salud específicos).
+                    PARTE 4: Alérgenos. (Lista clara con símbolos de advertencia ⚠️).
+                    
+                    IMPORTANTE: No escribas párrafos largos. Usa listas (puntos) para que sea muy visual.
                     """
                     
                     response = model.generate_content([prompt, image])
@@ -255,10 +300,11 @@ if uploaded_file and analitzar:
                         idx = sections.index(str(i)) + 1 if str(i) in sections else None
                         if idx:
                             content = sections[idx].strip()
+                            # Convertir Markdown de la IA a HTML de Streamlit (st.markdown procesa markdown dentro de los divs)
                             st.markdown(f"""
                                 <div class='analysis-section'>
                                     <span class='section-num'>{i}. {section_titles[i]}</span><br>
-                                    <span class='section-content'>{content}</span>
+                                    <div class='section-content'>{st.markdown(content) if False else content}</div>
                                 </div>
                             """, unsafe_allow_html=True)
                             
