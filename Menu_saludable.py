@@ -169,14 +169,32 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True) # Aquesta ordre permet a Streamlit utilitzar el codi de disseny
 
-# 2. BARRA LATERAL
+# ==================================================
+# PAS 4: BARRA LATERAL DE CONFIGURACIÓ
+# ==================================================
+# Amb Streamlit, 'st.sidebar' crea automàticament la columna de l'esquerra
 with st.sidebar:
-    st.title("⚙️ Configuració")
+    # Posem una icona de menjar des d'internet
+    st.image("https://cdn-icons-png.flaticon.com/512/2424/2424569.png", width=100)
+    
+    # Títol amb icona afegida
+    st.markdown("<h1 style='color: white; text-align: center;'>🛠️ Configuració</h1>", unsafe_allow_html=True)
+    st.divider()
+
+    # INTERRUPTOR: Mode Demo (sense connexió) o Mode Real (amb Intel·ligència Artificial)
     demo_mode = st.toggle("🚀 Activar Mode Demo", value=True)
+
     if demo_mode:
-        tipus_demo = st.selectbox("Tipus de simulació:", ["Menú Complet", "Plat Únic (Recepta)"])
+        # Si estem en demostració: triem quin exemple veure
+        tipus_demo = st.selectbox("Simulació:", ["Menú Complet", "Plat Únic (Recepta)"])
     else:
-        api_key = st.text_input("Gemini API Key:", type="password")
+        # 🔑 SI UTILITZEM LA IA: AQUÍ ÉS ON APLIQUEM EL QUE VAREM VEURE A CLASSE
+        # Demanem la CLAU D'ACCÉS (API Key), igual que es fa amb ChatGPT o OpenAI.
+        # Sense aquesta clau, no podem connectar amb el servidor de Google.
+        api_key = st.text_input("Gemini API Key:", type="password") # 'password' amaga el text escrit
+
+    # Text informatiu per a l'usuari
+    st.markdown("<br><p style='font-style: italic; color: white;'>Selecciona una foto d'un plat o menú per rebre consells nutricionals personalitzats.</p>", unsafe_allow_html=True)
 
 # 3. CAPÇALERA
 st.title("🥗 Assistent de Menús Saludables")
