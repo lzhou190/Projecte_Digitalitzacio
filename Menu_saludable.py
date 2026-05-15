@@ -46,3 +46,14 @@ st.title("🥗 Assistent de Menús Saludables")
 st.write("Digitalitza la teva alimentació amb Intel·ligència Artificial.")
 st.write("---")
 
+# 4. COS DE L'APLICACIÓ
+col1, col2 = st.columns([1, 1], gap="large")
+
+with col1:
+    st.markdown("<div class='info-header'>📸 Puja la teva imatge</div>", unsafe_allow_html=True)
+    uploaded_file = st.file_uploader("", type=["jpg", "jpeg", "png"])
+    
+    if uploaded_file:
+        image = Image.open(uploaded_file)
+        st.image(image, use_container_width=True)
+        analitzar = st.button("🔍 ANALITZAR AMB IA")
