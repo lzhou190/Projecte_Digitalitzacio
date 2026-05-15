@@ -17,3 +17,20 @@ Para que funciones es necesario tener instalado previamente Node.js, que aporta 
 # Método para ejecutar la aplicación
 Primero hay que abrir Powershell, sitúa en la carpeta donde hay el archivo del proyecto y ejecuta el siguiente comando: py -m streamlit run "nombre_archivo.py"
 Si aparece el mensaje Allow execution of [py]?, se debe seleccionar la opción 1, Allow once para permitir la ejecución y continuar.
+
+# Funcionamiento y modos de uso
+En la interfaz se encuentra una barra lateral izquierda con la configuración principal, y el área central dividida en dos partes: carga de imagen y análisis de los resultados.
+Existe el modo Demo: Es el modo de prueba, no requiere claves ni conexión externa.
+Al activarlo, se puede elegir entre 2 simulaciones:
+
+ - Menú Completo: muestra un análisis de ejemplo con varios platos, valoración nutricional y recomendaciones de combinación.
+
+   - Plato Único (Receta): Simula el reconocimiento de un plato concreto, detalla ingredientes, valores nutricionales y consejos de mejora.
+
+   - Al subir cualquier foto y pulsar "Analizar ahora", se demuestra una respuesta de ejemplo predefinida.
+
+- Menú inteligente (Análisis real):
+   - Para usar la inteligencia artilicial, en caso de tener marcado modo Demo (hay que desactivarlo), introduce la clave API de google gemini en el campo y pulsa Enter.
+
+   - Subir un foto del plato / menú y luego pulsar en el botón Analizar ahora.
+
