@@ -40,3 +40,17 @@ with st.sidebar:
         tipus_demo = st.selectbox("Tipus de simulació:", ["Menú Complet", "Plat Únic (Recepta)"])
     else:
         api_key = st.text_input("Gemini API Key:", type="password")
+
+    # 3. CAPÇALERA
+￼
+46
++
+st.title("🥗 Assistent de Menús Saludables")
+￼
+47
++
+st.write("Digitalitza la teva alimentació amb Intel·ligència Artificial.")
+￼
+48
++
+st.write("---")
