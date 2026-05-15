@@ -306,13 +306,15 @@ if uploaded_file and analitzar:
                     - Primera línea: [SCORE:A] o [SCORE:B], [SCORE:C], [SCORE:D], [SCORE:E] según la calidad.
                     - Luego, 4 secciones numeradas (PARTE 1 a 4).
                     
-                    CONTENIDO:
-                    1. Identifica platos y bebidas (especifica si es agua, café, limonada, etc.).
-                    2. Detalla nutrientes (especifica si hay azúcares, grasas saturadas, proteínas, etc.).
-                    3. Da recomendaciones saludables.
-                    4. Indica alérgenos.
+                    CONTENIDO Y REGLA DE ICONOS:
+                    1. PARTE 1: Identificación. Lista de platos y bebidas. Añade emojis representativos al final de cada oración (ej: Lasaña de ricota 🥘🧀, Café con leche ☕🥛).
+                    2. PARTE 2: Análisis Nutricional. Detalla nutrientes. Añade emojis al final de cada punto (ej: Grasas saturadas 🥑🥓, Azúcares 🍭, Proteínas 💪).
+                    3. PARTE 3: Recomendaciones. Consejos de salud con emojis al final (ej: Bebe más agua 💧, más verdura 🥦).
+                    4. PARTE 4: Alérgenos. Lista con símbolos de advertencia y el alimento (ej: Gluten 🌾⚠️, Lácteos 🥛🍼).
                     
-                    ESTILO: Usa listas con asteriscos (*). Sé muy descriptivo para que pueda identificar los alimentos.
+                    IMPORTANTE: Al final de cada oración o ítem, incluye íconos o símbolos inteligentes que coincidan con lo mencionado. Si no hay uno exacto, usa uno genérico relacionado.
+                    
+                    ESTILO: Usa listas con asteriscos (*). No uses títulos ###. Sé muy descriptivo.
                     """
                     
                     response = model.generate_content([prompt, image])
