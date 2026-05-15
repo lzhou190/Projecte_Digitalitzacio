@@ -253,7 +253,7 @@ with col2:
                         st.warning("⚠️ Si us plau, introdueix la teva API Key a la barra lateral.")
                     else:
                         genai.configure(api_key=api_key)
-                        model = genai.GenerativeModel('gemini-1.5-flash-latest')
+                        model = genai.GenerativeModel('gemini-1.5-flash-002')
                         prompt = "Analitza aquesta imatge. Si és un menú, transcriu-lo i recomana l'opció més sana. Si és un plat, identifica els ingredients i dóna consells nutricionals. Respon en català de forma professional."
                         response = model.generate_content([prompt, image])
                         st.markdown(f"### 🤖 Anàlisi de la IA:\n\n{response.text}")
