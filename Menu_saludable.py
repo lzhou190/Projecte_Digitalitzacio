@@ -31,3 +31,12 @@ st.markdown("""
     }
     </style>
     """, unsafe_allow_html=True)
+
+    # 2. BARRA LATERAL
+with st.sidebar:
+    st.title("⚙️ Configuració")
+    demo_mode = st.toggle("🚀 Activar Mode Demo", value=True)
+    if demo_mode:
+        tipus_demo = st.selectbox("Tipus de simulació:", ["Menú Complet", "Plat Únic (Recepta)"])
+    else:
+        api_key = st.text_input("Gemini API Key:", type="password")
